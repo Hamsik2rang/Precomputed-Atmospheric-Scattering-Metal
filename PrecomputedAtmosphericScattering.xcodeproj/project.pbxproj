@@ -1,0 +1,438 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3A1F1B3D1F033827001622B3 /* AAPLViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A35329C1E99974500C194AD /* AAPLViewController.m */; };
+		3A1F1B3E1F033846001622B3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A3532931E99974500C194AD /* main.m */; };
+		3A3532CC1E99974500C194AD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3A3532CA1E99974500C194AD /* Main.storyboard */; };
+		ATM00001001 /* AtmospherePrecomputation.m in Sources */ = {isa = PBXBuildFile; fileRef = ATM00000003 /* AtmospherePrecomputation.m */; };
+		ATM00001002 /* AtmosphereRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = ATM00000005 /* AtmosphereRenderer.m */; };
+		ATM00001003 /* AtmosphereFunctions.metal in Sources */ = {isa = PBXBuildFile; fileRef = ATM00000006 /* AtmosphereFunctions.metal */; };
+		ATM00001004 /* AtmosphereCompute.metal in Sources */ = {isa = PBXBuildFile; fileRef = ATM00000007 /* AtmosphereCompute.metal */; };
+		ATM00001005 /* AtmosphereShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ATM00000008 /* AtmosphereShaders.metal */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		328A8E964EC41C65EC8AF01A /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		3A3532931E99974500C194AD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3A35329B1E99974500C194AD /* AAPLViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AAPLViewController.h; sourceTree = "<group>"; };
+		3A35329C1E99974500C194AD /* AAPLViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AAPLViewController.m; sourceTree = "<group>"; };
+		3A3532BF1E99974500C194AD /* Precomputed Atmospheric Scattering.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Precomputed Atmospheric Scattering.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A3532CB1E99974500C194AD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		3A3532CD1E99974500C194AD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3ACD21331EAE60D2000D1DED /* AAPLAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLAppDelegate.h; sourceTree = "<group>"; };
+		3ACD21341EAE60D2000D1DED /* AAPLAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLAppDelegate.m; sourceTree = "<group>"; };
+		3ED283CC1EC2C6D200A23F58 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		907FE32A28789CDAFD777257 /* SampleCode.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		ATM00000001 /* AtmosphereShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtmosphereShaderTypes.h; sourceTree = "<group>"; };
+		ATM00000002 /* AtmosphereConstants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtmosphereConstants.h; sourceTree = "<group>"; };
+		ATM00000003 /* AtmospherePrecomputation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtmospherePrecomputation.m; sourceTree = "<group>"; };
+		ATM00000004 /* AtmospherePrecomputation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtmospherePrecomputation.h; sourceTree = "<group>"; };
+		ATM00000005 /* AtmosphereRenderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AtmosphereRenderer.m; sourceTree = "<group>"; };
+		ATM00000006 /* AtmosphereFunctions.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AtmosphereFunctions.metal; sourceTree = "<group>"; };
+		ATM00000007 /* AtmosphereCompute.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AtmosphereCompute.metal; sourceTree = "<group>"; };
+		ATM00000008 /* AtmosphereShaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AtmosphereShaders.metal; sourceTree = "<group>"; };
+		ATM00000009 /* AtmosphereRenderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtmosphereRenderer.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3A3532BC1E99974500C194AD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3A1F1B361F0336DB001622B3 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				3A3532CA1E99974500C194AD /* Main.storyboard */,
+				3A3532CD1E99974500C194AD /* Info.plist */,
+			);
+			path = macOS;
+			sourceTree = "<group>";
+		};
+		3A35327E1E99974500C194AD = {
+			isa = PBXGroup;
+			children = (
+				3ED283CC1EC2C6D200A23F58 /* README.md */,
+				3A3532831E99974500C194AD /* Renderer */,
+				3A3532911E99974500C194AD /* Application */,
+				3A3532901E99974500C194AD /* Products */,
+				F4F7FAFBBA6575359FC81F34 /* Configuration */,
+				9772A968083C4C14D4BE84E1 /* LICENSE */,
+			);
+			sourceTree = "<group>";
+		};
+		3A3532831E99974500C194AD /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				ATMGRP00001 /* Atmosphere */,
+				ATMGRP00002 /* Compute */,
+				ATMGRP00003 /* Shaders */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
+		3A3532901E99974500C194AD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3A3532BF1E99974500C194AD /* Precomputed Atmospheric Scattering.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3A3532911E99974500C194AD /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				3ACD21331EAE60D2000D1DED /* AAPLAppDelegate.h */,
+				3ACD21341EAE60D2000D1DED /* AAPLAppDelegate.m */,
+				3A35329B1E99974500C194AD /* AAPLViewController.h */,
+				3A35329C1E99974500C194AD /* AAPLViewController.m */,
+				3A3532931E99974500C194AD /* main.m */,
+				3A1F1B361F0336DB001622B3 /* macOS */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		9772A968083C4C14D4BE84E1 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				328A8E964EC41C65EC8AF01A /* LICENSE.txt */,
+			);
+			name = LICENSE;
+			path = .;
+			sourceTree = "<group>";
+		};
+		ATMGRP00001 /* Atmosphere */ = {
+			isa = PBXGroup;
+			children = (
+				ATM00000001 /* AtmosphereShaderTypes.h */,
+				ATM00000002 /* AtmosphereConstants.h */,
+				ATM00000004 /* AtmospherePrecomputation.h */,
+				ATM00000003 /* AtmospherePrecomputation.m */,
+				ATM00000009 /* AtmosphereRenderer.h */,
+				ATM00000005 /* AtmosphereRenderer.m */,
+				ATM00000006 /* AtmosphereFunctions.metal */,
+			);
+			path = Atmosphere;
+			sourceTree = "<group>";
+		};
+		ATMGRP00002 /* Compute */ = {
+			isa = PBXGroup;
+			children = (
+				ATM00000007 /* AtmosphereCompute.metal */,
+			);
+			path = Compute;
+			sourceTree = "<group>";
+		};
+		ATMGRP00003 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				ATM00000008 /* AtmosphereShaders.metal */,
+			);
+			path = Shaders;
+			sourceTree = "<group>";
+		};
+		F4F7FAFBBA6575359FC81F34 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				907FE32A28789CDAFD777257 /* SampleCode.xcconfig */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A3532BE1E99974500C194AD /* Precomputed Atmospheric Scattering */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A3532E81E99974500C194AD /* Build configuration list for PBXNativeTarget "Precomputed Atmospheric Scattering" */;
+			buildPhases = (
+				3A3532BB1E99974500C194AD /* Sources */,
+				3A3532BC1E99974500C194AD /* Frameworks */,
+				3A3532BD1E99974500C194AD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Precomputed Atmospheric Scattering";
+			productName = macOS;
+			productReference = 3A3532BF1E99974500C194AD /* Precomputed Atmospheric Scattering.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3A35327F1E99974500C194AD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1320;
+				ORGANIZATIONNAME = "";
+				TargetAttributes = {
+					3A3532BE1E99974500C194AD = {
+						CreatedOnToolsVersion = 8.3;
+						DevelopmentTeam = A93A5CM278;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 3A3532821E99974500C194AD /* Build configuration list for PBXProject "PrecomputedAtmosphericScattering" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3A35327E1E99974500C194AD;
+			productRefGroup = 3A3532901E99974500C194AD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3A3532BE1E99974500C194AD /* Precomputed Atmospheric Scattering */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3A3532BD1E99974500C194AD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A3532CC1E99974500C194AD /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3A3532BB1E99974500C194AD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A1F1B3D1F033827001622B3 /* AAPLViewController.m in Sources */,
+				3A1F1B3E1F033846001622B3 /* main.m in Sources */,
+				ATM00001001 /* AtmospherePrecomputation.m in Sources */,
+				ATM00001002 /* AtmosphereRenderer.m in Sources */,
+				ATM00001003 /* AtmosphereFunctions.metal in Sources */,
+				ATM00001004 /* AtmosphereCompute.metal in Sources */,
+				ATM00001005 /* AtmosphereShaders.metal in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		3A3532CA1E99974500C194AD /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				3A3532CB1E99974500C194AD /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		3A3532E01E99974500C194AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 907FE32A28789CDAFD777257 /* SampleCode.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Renderer",
+					"$(SRCROOT)/Renderer/Atmosphere",
+				);
+				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_FAST_MATH = YES;
+				MTL_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Renderer $(SRCROOT)/Renderer/Atmosphere";
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "Precomputed Atmospheric Scattering";
+			};
+			name = Debug;
+		};
+		3A3532E11E99974500C194AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 907FE32A28789CDAFD777257 /* SampleCode.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SRCROOT)/Renderer",
+					"$(SRCROOT)/Renderer/Atmosphere",
+				);
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				MTL_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/Renderer $(SRCROOT)/Renderer/Atmosphere";
+				PRODUCT_NAME = "Precomputed Atmospheric Scattering";
+			};
+			name = Release;
+		};
+		3A3532E91E99974500C194AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 907FE32A28789CDAFD777257 /* SampleCode.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					TARGET_MACOS,
+				);
+				INFOPLIST_FILE = Application/macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.PrecomputedAtmosphericScattering${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_NAME = "Precomputed Atmospheric Scattering";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3A3532EA1E99974500C194AD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 907FE32A28789CDAFD777257 /* SampleCode.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = TARGET_MACOS;
+				INFOPLIST_FILE = Application/macOS/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.PrecomputedAtmosphericScattering${SAMPLE_CODE_DISAMBIGUATOR}";
+				PRODUCT_NAME = "Precomputed Atmospheric Scattering";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3A3532821E99974500C194AD /* Build configuration list for PBXProject "PrecomputedAtmosphericScattering" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A3532E01E99974500C194AD /* Debug */,
+				3A3532E11E99974500C194AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3A3532E81E99974500C194AD /* Build configuration list for PBXNativeTarget "Precomputed Atmospheric Scattering" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A3532E91E99974500C194AD /* Debug */,
+				3A3532EA1E99974500C194AD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3A35327F1E99974500C194AD /* Project object */;
+}
