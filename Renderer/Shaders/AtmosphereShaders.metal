@@ -347,7 +347,7 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
                 transmittance_texture,
                 irradiance_texture,
                 textureSampler,
-                (point - uniforms.earth_center) * kLengthUnitInMeters,  // 미터 변환!
+                (point - uniforms.earth_center) * kLengthUnitInMeters,  // 미터 변환
                 normal,
                 uniforms.sun_direction,
                 sky_irradiance);
@@ -562,11 +562,11 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
     //
     // 원리: 양자화 오차를 무작위화하여 규칙적인 밴딩 대신
     //       덜 눈에 띄는 노이즈로 분산시킴
-
-//    float2 screenPos = in.position.xy;
-//    float dither = fract(dot(screenPos, float2(0.06711056, 0.00583715))) * 2.0 - 1.0;
-//    dither = sign(dither) * (1.0 - sqrt(1.0 - abs(dither)));  // 삼각 분포 변환
-//    color += dither / 255.0;  // ±0.5 LSB (8비트)
+    // -> 구현 결과 디더링 여부가 큰 차이를 발생시키지 않아 주석 처리합니다.
+    //    float2 screenPos = in.position.xy;
+    //    float dither = fract(dot(screenPos, float2(0.06711056, 0.00583715))) * 2.0 - 1.0;
+    //    dither = sign(dither) * (1.0 - sqrt(1.0 - abs(dither)));  // 삼각 분포 변환
+    //    color += dither / 255.0;  // ±0.5 LSB (8비트)
 
     out.color = float4(color, 1.0);
     return out;
