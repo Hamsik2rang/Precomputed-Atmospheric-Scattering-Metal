@@ -10,7 +10,8 @@ static const double kSunAngularRadius = 0.00935 / 2.0;
 static const double kLengthUnitInMeters = 1000.0;
 static const double kBottomRadius = 6360000.0;
 
-@implementation AtmosphereRenderer {
+@implementation AtmosphereRenderer
+{
     // Precomputation
     AtmospherePrecomputation *_precomputation;
 
@@ -35,9 +36,11 @@ static const double kBottomRadius = 6360000.0;
 
 #pragma mark - Initialization
 
-- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView {
+- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView
+{
     self = [super init];
-    if (self) {
+    if (self)
+    {
         _device = mtkView.device;
         _commandQueue = [_device newCommandQueue];
 
@@ -70,7 +73,8 @@ static const double kBottomRadius = 6360000.0;
 
 #pragma mark - Setup
 
-- (void)setupRenderPipelineWithView:(MTKView *)mtkView {
+- (void)setupRenderPipelineWithView:(MTKView *)mtkView
+{
     NSError *error = nil;
 
     // Load shaders
@@ -79,7 +83,8 @@ static const double kBottomRadius = 6360000.0;
     id<MTLFunction> vertexFunction = [library newFunctionWithName:@"atmosphereVertexShader"];
     id<MTLFunction> fragmentFunction = [library newFunctionWithName:@"atmosphereFragmentShader"];
 
-    if (!vertexFunction || !fragmentFunction) {
+    if (!vertexFunction || !fragmentFunction)
+    {
         NSLog(@"Error: Could not find atmosphere shader functions");
         return;
     }
@@ -94,7 +99,8 @@ static const double kBottomRadius = 6360000.0;
 
     _renderPipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineDescriptor
                                                                    error:&error];
-    if (!_renderPipelineState) {
+    if (!_renderPipelineState)
+    {
         NSLog(@"Error creating render pipeline state: %@", error);
     }
 
@@ -115,7 +121,8 @@ static const double kBottomRadius = 6360000.0;
     _samplerState = [_device newSamplerStateWithDescriptor:samplerDescriptor];
 }
 
-- (void)setupVertexBuffers {
+- (void)setupVertexBuffers
+{
     // Fullscreen quad vertices (triangle strip)
     static const float quadVertices[] = {
         -1.0f, -1.0f, 0.0f, 1.0f,
@@ -130,7 +137,8 @@ static const double kBottomRadius = 6360000.0;
     _quadVertexBuffer.label = @"Quad Vertex Buffer";
 }
 
-- (void)setupUniformBuffers {
+- (void)setupUniformBuffers
+{
     // Atmosphere parameters buffer
     _atmosphereParamsBuffer = [_device newBufferWithLength:sizeof(AtmosphereParameters)
                                                    options:MTLResourceStorageModeShared];
@@ -150,33 +158,41 @@ static const double kBottomRadius = 6360000.0;
 
 #pragma mark - Precomputation
 
-- (void)precomputeAtmosphereWithCompletion:(void (^)(void))completion {
-    [_precomputation precomputeWithCommandQueue:_commandQueue completion:^{
+- (void)precomputeAtmosphereWithCompletion:(void (^)(void))completion
+{
+    [_precomputation precomputeWithCommandQueue:_commandQueue completion:^
+    {
         self->_isPrecomputed = YES;
-        if (completion) {
+        if (completion)
+        {
             completion();
         }
     }];
 }
 
-- (BOOL)isPrecomputed {
+- (BOOL)isPrecomputed
+{
     return _isPrecomputed;
 }
 
 #pragma mark - MTKViewDelegate
 
-- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size {
+- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
+{
     _viewportSize.x = size.width;
     _viewportSize.y = size.height;
 }
 
-- (void)drawInMTKView:(nonnull MTKView *)view {
-    if (!_isPrecomputed) {
+- (void)drawInMTKView:(nonnull MTKView *)view
+{
+    if (!_isPrecomputed)
+    {
         // Clear to dark blue while waiting for precomputation
         view.clearColor = MTLClearColorMake(0.0, 0.0, 0.1, 1.0);
         id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
         MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
-        if (renderPassDescriptor) {
+        if (renderPassDescriptor)
+        {
             id<MTLRenderCommandEncoder> encoder =
                 [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
             [encoder endEncoding];
@@ -195,7 +211,8 @@ static const double kBottomRadius = 6360000.0;
 
     // Get render pass descriptor
     MTLRenderPassDescriptor *renderPassDescriptor = view.currentRenderPassDescriptor;
-    if (renderPassDescriptor == nil) {
+    if (renderPassDescriptor == nil)
+    {
         [commandBuffer commit];
         return;
     }
@@ -241,10 +258,13 @@ static const double kBottomRadius = 6360000.0;
                               atIndex:TextureIndexIrradiance];
 
     // Set optional single Mie scattering texture
-    if (_precomputation.optionalSingleMieScatteringTexture) {
+    if (_precomputation.optionalSingleMieScatteringTexture)
+    {
         [renderEncoder setFragmentTexture:_precomputation.optionalSingleMieScatteringTexture
                                   atIndex:TextureIndexSingleMieScattering];
-    } else {
+    }
+    else
+    {
         [renderEncoder setFragmentTexture:_precomputation.scatteringTexture
                                   atIndex:TextureIndexSingleMieScattering];
     }
@@ -266,7 +286,8 @@ static const double kBottomRadius = 6360000.0;
 
 #pragma mark - Uniform Updates
 
-- (void)updateUniforms {
+- (void)updateUniforms
+{
     AtmosphereUniforms *uniforms = (AtmosphereUniforms *)_uniformsBuffer.contents;
 
     // Sphere center (demo sphere at 1km altitude)
@@ -299,11 +320,14 @@ static const double kBottomRadius = 6360000.0;
 
     // Handle case when looking straight up or down
     simd_float3 ux;
-    if (fabs(simd_dot(uz, worldUp)) > 0.999) {
+    if (fabs(simd_dot(uz, worldUp)) > 0.999)
+    {
         // Use alternative up vector when looking along z-axis
         simd_float3 altUp = simd_make_float3(0.0, 1.0, 0.0);
         ux = simd_normalize(simd_cross(altUp, uz));
-    } else {
+    }
+    else
+    {
         ux = simd_normalize(simd_cross(worldUp, uz));
     }
     simd_float3 uy = simd_cross(uz, ux);  // up = forward × right (right-handed convention)
@@ -325,11 +349,13 @@ static const double kBottomRadius = 6360000.0;
     uniforms->exposure = _exposure;
 
     // White point (for color correction)
-    if (_doWhiteBalance) {
+    if (_doWhiteBalance)
+    {
         // TODO: Implement proper white balance calculation
         uniforms->white_point = simd_make_float3(1.0, 1.0, 1.0);
     }
-    else {
+    else
+    {
         uniforms->white_point = simd_make_float3(1.0, 1.0, 1.0);
     }
 
@@ -359,19 +385,23 @@ static const double kBottomRadius = 6360000.0;
 
 - (void)setViewDistance:(double)meters
             zenithAngle:(double)zenith
-           azimuthAngle:(double)azimuth {
+           azimuthAngle:(double)azimuth
+{
     _viewDistanceMeters = meters;
     _viewZenithAngleRadians = zenith;
     _viewAzimuthAngleRadians = azimuth;
 }
 
-- (void)setSunZenithAngle:(double)zenith azimuthAngle:(double)azimuth {
+- (void)setSunZenithAngle:(double)zenith azimuthAngle:(double)azimuth
+{
     _sunZenithAngleRadians = zenith;
     _sunAzimuthAngleRadians = azimuth;
 }
 
-- (void)setPresetView:(int)viewIndex {
-    switch (viewIndex) {
+- (void)setPresetView:(int)viewIndex
+{
+    switch (viewIndex)
+    {
         case 1:
             [self setViewDistance:9000.0 zenithAngle:1.47 azimuthAngle:0.0];
             [self setSunZenithAngle:1.3 azimuthAngle:3.0];
@@ -426,15 +456,19 @@ static const double kBottomRadius = 6360000.0;
 
 - (void)handleMouseDragDeltaX:(float)deltaX
                        deltaY:(float)deltaY
-                 withModifier:(BOOL)isCtrlPressed {
+                 withModifier:(BOOL)isCtrlPressed
+{
     const double kScale = 500.0;
 
-    if (isCtrlPressed) {
+    if (isCtrlPressed)
+    {
         // Control sun direction (invert Y for intuitive control: drag up = sun up)
         _sunZenithAngleRadians -= deltaY / kScale;  // 부호 반전
         _sunZenithAngleRadians = fmax(0.0, fmin(kPi, _sunZenithAngleRadians));
         _sunAzimuthAngleRadians += deltaX / kScale;
-    } else {
+    }
+    else
+    {
         // Control camera direction (compensate for Y-flip in shader)
         // Mouse down = look up = sphere moves up on screen
         _viewZenithAngleRadians -= deltaY / kScale;
@@ -443,10 +477,14 @@ static const double kBottomRadius = 6360000.0;
     }
 }
 
-- (void)handleScrollDelta:(float)delta {
-    if (delta < 0) {
+- (void)handleScrollDelta:(float)delta
+{
+    if (delta < 0)
+    {
         _viewDistanceMeters *= 1.05;
-    } else {
+    }
+    else
+    {
         _viewDistanceMeters /= 1.05;
     }
 }

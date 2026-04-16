@@ -59,14 +59,17 @@ Implementation of our cross-platform view controller
 // macOS Input Handling
 // ============================================================================
 
-- (BOOL)acceptsFirstResponder {
+- (BOOL)acceptsFirstResponder
+{
     return YES;
 }
 
-- (void)keyDown:(NSEvent *)event {
+- (void)keyDown:(NSEvent *)event
+{
     unichar key = [[event characters] characterAtIndex:0];
 
-    switch (key) {
+    switch (key)
+    {
         case '1':
         case '2':
         case '3':
@@ -104,16 +107,19 @@ Implementation of our cross-platform view controller
     }
 }
 
-- (void)mouseDown:(NSEvent *)event {
+- (void)mouseDown:(NSEvent *)event
+{
     _previousMouseLocation = [event locationInWindow];
     _isDragging = YES;
 }
 
-- (void)mouseUp:(NSEvent *)event {
+- (void)mouseUp:(NSEvent *)event
+{
     _isDragging = NO;
 }
 
-- (void)mouseDragged:(NSEvent *)event {
+- (void)mouseDragged:(NSEvent *)event
+{
     if (!_isDragging) return;
 
     NSPoint currentLocation = [event locationInWindow];
@@ -129,23 +135,28 @@ Implementation of our cross-platform view controller
     _previousMouseLocation = currentLocation;
 }
 
-- (void)scrollWheel:(NSEvent *)event {
+- (void)scrollWheel:(NSEvent *)event
+{
     float delta = event.deltaY;
-    if (fabs(delta) > 0.01) {
+    if (fabs(delta) > 0.01)
+    {
         [_renderer handleScrollDelta:delta];
     }
 }
 
-- (void)rightMouseDown:(NSEvent *)event {
+- (void)rightMouseDown:(NSEvent *)event
+{
     _previousMouseLocation = [event locationInWindow];
     _isDragging = YES;
 }
 
-- (void)rightMouseUp:(NSEvent *)event {
+- (void)rightMouseUp:(NSEvent *)event
+{
     _isDragging = NO;
 }
 
-- (void)rightMouseDragged:(NSEvent *)event {
+- (void)rightMouseDragged:(NSEvent *)event
+{
     if (!_isDragging) return;
 
     NSPoint currentLocation = [event locationInWindow];
@@ -165,17 +176,20 @@ Implementation of our cross-platform view controller
 // iOS/tvOS Input Handling (Touch)
 // ============================================================================
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
     UITouch *touch = [touches anyObject];
     _previousMouseLocation = [touch locationInView:self.view];
     _isDragging = YES;
 }
 
-- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
     _isDragging = NO;
 }
 
-- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
     if (!_isDragging) return;
 
     UITouch *touch = [touches anyObject];

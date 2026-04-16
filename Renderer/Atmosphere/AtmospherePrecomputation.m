@@ -136,9 +136,11 @@
  * - useHalfPrecision=NO: 32비트 부동소수점 사용 (정밀도 우선)
  * - numScatteringOrders=4: 4차 산란까지 계산 (품질과 성능의 균형점)
  */
-- (instancetype)initWithDevice:(id<MTLDevice>)device {
+- (instancetype)initWithDevice:(id<MTLDevice>)device
+{
     self = [super init];
-    if (self) {
+    if (self)
+    {
         _device = device;
         _useCombinedTextures = YES;   // Mie를 alpha 채널에 저장
         _useHalfPrecision = NO;       // Float32 사용 (정밀도 우선)
@@ -160,11 +162,13 @@
  * 5. ComputeIndirectIrradiance - 간접광 복사조도 누적
  * 6. ComputeMultipleScattering - 다중 산란 누적
  */
-- (void)setupPipelineStates {
+- (void)setupPipelineStates
+{
     NSError *error = nil;
 
     _library = [_device newDefaultLibrary];
-    if (!_library) {
+    if (!_library)
+    {
         NSLog(@"Failed to load default Metal library");
         return;
     }
@@ -189,9 +193,11 @@
     if (error) NSLog(@"ComputeMultipleScattering error: %@", error);
 }
 
-- (id<MTLComputePipelineState>)createPipelineWithFunction:(NSString *)functionName error:(NSError **)error {
+- (id<MTLComputePipelineState>)createPipelineWithFunction:(NSString *)functionName error:(NSError **)error
+{
     id<MTLFunction> function = [_library newFunctionWithName:functionName];
-    if (!function) {
+    if (!function)
+    {
         NSLog(@"Failed to find function: %@", functionName);
         return nil;
     }
@@ -206,7 +212,8 @@
 - (id<MTLTexture>)createTexture2DWithWidth:(NSUInteger)width
                                     height:(NSUInteger)height
                                     format:(MTLPixelFormat)format
-                                     usage:(MTLTextureUsage)usage {
+                                     usage:(MTLTextureUsage)usage
+{
     MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format
                                                                                     width:width
                                                                                    height:height
@@ -221,7 +228,8 @@
                                     height:(NSUInteger)height
                                      depth:(NSUInteger)depth
                                     format:(MTLPixelFormat)format
-                                     usage:(MTLTextureUsage)usage {
+                                     usage:(MTLTextureUsage)usage
+{
     MTLTextureDescriptor *desc = [[MTLTextureDescriptor alloc] init];
     desc.textureType = MTLTextureType3D;
     desc.pixelFormat = format;
@@ -245,7 +253,8 @@
  * - Half precision (16-bit): 메모리 절약, 약간의 정밀도 손실
  * - Full precision (32-bit): 최고 품질, 메모리 2배 사용
  */
-- (void)createTextures {
+- (void)createTextures
+{
     // 픽셀 포맷 선택 (half vs full precision)
     MTLPixelFormat format2D = _useHalfPrecision ? MTLPixelFormatRGBA16Float : MTLPixelFormatRGBA32Float;
     MTLPixelFormat format3D = _useHalfPrecision ? MTLPixelFormatRGBA16Float : MTLPixelFormatRGBA32Float;
@@ -268,7 +277,8 @@
                                                   usage:MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite];
 
     // useCombinedTextures=NO일 때만 별도 Mie 텍스처 생성
-    if (!_useCombinedTextures) {
+    if (!_useCombinedTextures)
+    {
         _optionalSingleMieScatteringTexture = [self createTexture3DWithWidth:SCATTERING_TEXTURE_WIDTH
                                                                       height:SCATTERING_TEXTURE_HEIGHT
                                                                        depth:SCATTERING_TEXTURE_DEPTH
@@ -326,7 +336,8 @@
  * - 고도 25km 근처에 피크가 있는 복잡한 분포
  * - 두 레이어로 근사: 아래층(증가) + 위층(감소)
  */
-- (void)setupEarthAtmosphere {
+- (void)setupEarthAtmosphere
+{
     AtmosphereParameters params;
 
     // ---- 태양 복사 ----
@@ -379,7 +390,8 @@
 }
 
 /// 대기 파라미터 적용 및 변환 행렬 초기화
-- (void)setupAtmosphereWithParameters:(AtmosphereParameters)params {
+- (void)setupAtmosphereWithParameters:(AtmosphereParameters)params
+{
     _atmosphereParameters = params;
 
     // 복사휘도→휘도 변환 행렬 (radiance 모드에서는 단위행렬)
@@ -417,7 +429,8 @@
  * @param completion   완료 콜백 (메인 스레드에서 호출됨)
  */
 - (void)precomputeWithCommandQueue:(id<MTLCommandQueue>)commandQueue
-                        completion:(void (^)(void))completion {
+                        completion:(void (^)(void))completion
+{
 
     [self createTextures];
 
@@ -437,7 +450,8 @@
 
     // ---- Step 4: 다중 산란 반복 (2차 ~ n차) ----
     // 각 반복에서 이전 차수의 산란이 다음 차수의 광원이 됨
-    for (int order = 2; order <= _numScatteringOrders; order++) {
+    for (int order = 2; order <= _numScatteringOrders; order++)
+    {
         // 4a. 산란 밀도: (n-1)차 산란이 n차 산란의 소스가 됨
         [self computeScatteringDensityWithCommandBuffer:commandBuffer order:order];
 
@@ -449,8 +463,10 @@
     }
 
     // 비동기 완료 처리
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-        if (completion) {
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer)
+    {
+        if (completion)
+        {
             dispatch_async(dispatch_get_main_queue(), completion);
         }
     }];
@@ -463,7 +479,8 @@
 // ============================================================================
 
 /// 투과율 계산 - 논문 Equation 1: T(r,μ) = exp(-∫σ dx)
-- (void)computeTransmittanceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
+- (void)computeTransmittanceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:@"Compute Transmittance"];
     [encoder setComputePipelineState:_computeTransmittancePipeline];
@@ -480,7 +497,8 @@
 }
 
 /// 직사 복사조도 계산: 태양 → 대기 → 지표면 직접 도달량
-- (void)computeDirectIrradianceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
+- (void)computeDirectIrradianceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:@"Compute Direct Irradiance"];
     [encoder setComputePipelineState:_computeDirectIrradiancePipeline];
@@ -498,7 +516,8 @@
 }
 
 /// 1차 산란 계산 - 논문 Equation 6: 태양→입자→관측점
-- (void)computeSingleScatteringWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
+- (void)computeSingleScatteringWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:@"Compute Single Scattering"];
     [encoder setComputePipelineState:_computeSingleScatteringPipeline];
@@ -521,7 +540,8 @@
 }
 
 /// n차 산란 밀도 계산: (n-1)차 산란이 n차의 광원이 됨
-- (void)computeScatteringDensityWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer order:(int)order {
+- (void)computeScatteringDensityWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer order:(int)order
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:[NSString stringWithFormat:@"Compute Scattering Density (order %d)", order]];
     [encoder setComputePipelineState:_computeScatteringDensityPipeline];
@@ -543,7 +563,8 @@
 }
 
 /// n차 산란에 의한 간접 복사조도 계산 및 누적
-- (void)computeIndirectIrradianceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer order:(int)order {
+- (void)computeIndirectIrradianceWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer order:(int)order
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:[NSString stringWithFormat:@"Compute Indirect Irradiance (order %d)", order]];
     [encoder setComputePipelineState:_computeIndirectIrradiancePipeline];
@@ -567,7 +588,8 @@
 }
 
 /// 다중 산란 결과 계산 및 최종 텍스처에 누적
-- (void)computeMultipleScatteringWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer {
+- (void)computeMultipleScatteringWithCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
+{
     id<MTLComputeCommandEncoder> encoder = [commandBuffer computeCommandEncoder];
     [encoder setLabel:@"Compute Multiple Scattering"];
     [encoder setComputePipelineState:_computeMultipleScatteringPipeline];
@@ -592,7 +614,8 @@
 
 /// 텍스처 샘플러 생성
 /// 선형 보간 + 에지 클램핑으로 부드러운 LUT 조회 지원
-- (id<MTLSamplerState>)createSampler {
+- (id<MTLSamplerState>)createSampler
+{
     MTLSamplerDescriptor *desc = [[MTLSamplerDescriptor alloc] init];
     desc.minFilter = MTLSamplerMinMagFilterLinear;   // 축소 시 선형 보간
     desc.magFilter = MTLSamplerMinMagFilterLinear;   // 확대 시 선형 보간

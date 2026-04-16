@@ -72,25 +72,29 @@ typedef float3 Direction;
 
 // 코사인 값을 [-1, 1] 범위로 제한
 // μ = cos(θ)이므로 물리적으로 이 범위를 벗어날 수 없음
-inline Number ClampCosine(Number mu) {
+inline Number ClampCosine(Number mu)
+{
     return clamp(mu, Number(-1.0), Number(1.0));
 }
 
 // 거리를 음수가 되지 않도록 제한
 // 광선-구체 교차점 계산에서 음수 거리는 "뒤쪽" 교차점을 의미
-inline Length ClampDistance(Length d) {
+inline Length ClampDistance(Length d)
+{
     return max(d, Length(0.0));
 }
 
 // 반지름을 대기 경계 내로 제한
 // r ∈ [bottom_radius, top_radius] = [6,360km, 6,420km] (지구 기준)
-inline Length ClampRadius(constant AtmosphereParameters& atmosphere, Length r) {
+inline Length ClampRadius(constant AtmosphereParameters& atmosphere, Length r)
+{
     return clamp(r, atmosphere.bottom_radius, atmosphere.top_radius);
 }
 
 // 음수 입력에 대해 0을 반환하는 안전한 제곱근
 // 수치 오차로 인한 약간의 음수값 처리
-inline Length SafeSqrt(Area a) {
+inline Length SafeSqrt(Area a)
+{
     return sqrt(max(a, Area(0.0)));
 }
 
@@ -134,7 +138,8 @@ inline Length SafeSqrt(Area a) {
  */
 inline Length DistanceToTopAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     // 판별식: r²(μ² - 1) + R_top²
     // μ² - 1 = -sin²θ ≤ 0 이므로, R_top > r이면 항상 양수
     Area discriminant = r * r * (mu * mu - 1.0) +
@@ -150,7 +155,8 @@ inline Length DistanceToTopAtmosphereBoundary(
  */
 inline Length DistanceToBottomAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     Area discriminant = r * r * (mu * mu - 1.0) +
         atmosphere.bottom_radius * atmosphere.bottom_radius;
     return ClampDistance(-r * mu - SafeSqrt(discriminant));
@@ -168,7 +174,8 @@ inline Length DistanceToBottomAtmosphereBoundary(
  */
 inline bool RayIntersectsGround(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     return mu < 0.0 && r * r * (mu * mu - 1.0) +
         atmosphere.bottom_radius * atmosphere.bottom_radius >= 0.0;
 }
@@ -184,7 +191,8 @@ inline bool RayIntersectsGround(
  *
  * 오존(흡수)의 경우 더 복잡한 프로파일 사용 (성층권에서 최대)
  */
-inline Number GetLayerDensity(DensityProfileLayer layer, Length altitude) {
+inline Number GetLayerDensity(DensityProfileLayer layer, Length altitude)
+{
     Number density = layer.exp_term * exp(layer.exp_scale * altitude) +
         layer.linear_term * altitude + layer.constant_term;
     return clamp(density, Number(0.0), Number(1.0));
@@ -199,7 +207,8 @@ inline Number GetLayerDensity(DensityProfileLayer layer, Length altitude) {
  *
  * Rayleigh/Mie는 단일 레이어만 사용 (layers[1]만 유효)
  */
-inline Number GetProfileDensity(DensityProfile profile, Length altitude) {
+inline Number GetProfileDensity(DensityProfile profile, Length altitude)
+{
     return altitude < profile.layers[0].width ?
         GetLayerDensity(profile.layers[0], altitude) :
         GetLayerDensity(profile.layers[1], altitude);
@@ -221,13 +230,15 @@ inline Number GetProfileDensity(DensityProfile profile, Length altitude) {
 inline Length ComputeOpticalLengthToTopAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
     DensityProfile profile,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     // 적분 구간을 500개로 분할 (사전 계산이므로 정확도 우선)
     const int SAMPLE_COUNT = 500;
     Length dx = DistanceToTopAtmosphereBoundary(atmosphere, r, mu) / Number(SAMPLE_COUNT);
 
     Length result = 0.0;
-    for (int i = 0; i <= SAMPLE_COUNT; ++i) {
+    for (int i = 0; i <= SAMPLE_COUNT; ++i)
+    {
         Length d_i = Number(i) * dx;
         // 광선 위 거리 d_i에서의 지구 중심으로부터의 거리 r_i
         // r_i = |origin + d_i * direction| = √(d² + 2rμd + r²)
@@ -255,7 +266,8 @@ inline Length ComputeOpticalLengthToTopAtmosphereBoundary(
  */
 inline DimensionlessSpectrum ComputeTransmittanceToTopAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     return exp(-(
         // Rayleigh 산란: β_s^R * τ_R
         atmosphere.rayleigh_scattering *
@@ -298,14 +310,16 @@ inline DimensionlessSpectrum ComputeTransmittanceToTopAtmosphereBoundary(
  *
  * 이렇게 하면 텍스처 가장자리 픽셀의 중심이 정확히 0과 1에 대응됩니다.
  */
-inline Number GetTextureCoordFromUnitRange(Number x, int texture_size) {
+inline Number GetTextureCoordFromUnitRange(Number x, int texture_size)
+{
     return 0.5 / Number(texture_size) + x * (1.0 - 1.0 / Number(texture_size));
 }
 
 /**
  * 텍스처 좌표를 [0, 1] 범위로 역변환
  */
-inline Number GetUnitRangeFromTextureCoord(Number u, int texture_size) {
+inline Number GetUnitRangeFromTextureCoord(Number u, int texture_size)
+{
     return (u - 0.5 / Number(texture_size)) / (1.0 - 1.0 / Number(texture_size));
 }
 
@@ -332,7 +346,8 @@ inline Number GetUnitRangeFromTextureCoord(Number u, int texture_size) {
  */
 inline float2 GetTransmittanceTextureUvFromRMu(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     // H: 대기 두께에 해당하는 "최대 접선 거리"
     Length H = sqrt(atmosphere.top_radius * atmosphere.top_radius -
         atmosphere.bottom_radius * atmosphere.bottom_radius);
@@ -362,7 +377,8 @@ inline float2 GetTransmittanceTextureUvFromRMu(
  */
 inline void GetRMuFromTransmittanceTextureUv(
     constant AtmosphereParameters& atmosphere,
-    float2 uv, thread Length& r, thread Number& mu) {
+    float2 uv, thread Length& r, thread Number& mu)
+{
     // 텍스처 좌표 → [0, 1] 범위
     Number x_mu = GetUnitRangeFromTextureCoord(uv.x, TRANSMITTANCE_TEXTURE_WIDTH);
     Number x_r = GetUnitRangeFromTextureCoord(uv.y, TRANSMITTANCE_TEXTURE_HEIGHT);
@@ -387,7 +403,8 @@ inline void GetRMuFromTransmittanceTextureUv(
  * AtmospherePrecomputation.m에서 호출됩니다.
  */
 inline DimensionlessSpectrum ComputeTransmittanceToTopAtmosphereBoundaryTexture(
-    constant AtmosphereParameters& atmosphere, float2 frag_coord) {
+    constant AtmosphereParameters& atmosphere, float2 frag_coord)
+{
     const float2 TRANSMITTANCE_TEXTURE_SIZE =
         float2(TRANSMITTANCE_TEXTURE_WIDTH, TRANSMITTANCE_TEXTURE_HEIGHT);
     Length r;
@@ -415,7 +432,8 @@ inline DimensionlessSpectrum GetTransmittanceToTopAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> transmittance_texture,
     sampler s,
-    Length r, Number mu) {
+    Length r, Number mu)
+{
     float2 uv = GetTransmittanceTextureUvFromRMu(atmosphere, r, mu);
     return DimensionlessSpectrum(transmittance_texture.sample(s, uv).rgb);
 }
@@ -444,7 +462,8 @@ inline DimensionlessSpectrum GetTransmittance(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> transmittance_texture,
     sampler s,
-    Length r, Number mu, Length d, bool ray_r_mu_intersects_ground) {
+    Length r, Number mu, Length d, bool ray_r_mu_intersects_ground)
+{
 
     // 거리 d만큼 이동한 후의 위치 계산
     // r_d = √(d² + 2rμd + r²) : 새 위치의 반지름
@@ -452,7 +471,8 @@ inline DimensionlessSpectrum GetTransmittance(
     // μ_d = (rμ + d) / r_d : 새 위치에서의 시선 방향 코사인
     Number mu_d = ClampCosine((r * mu + d) / r_d);
 
-    if (ray_r_mu_intersects_ground) {
+    if (ray_r_mu_intersects_ground)
+    {
         // 지표면과 교차하는 경우: 반대 방향 사용
         // T(A→B) = T(B→top, -μ) / T(A→top, -μ)
         return min(
@@ -461,7 +481,9 @@ inline DimensionlessSpectrum GetTransmittance(
             GetTransmittanceToTopAtmosphereBoundary(
                 atmosphere, transmittance_texture, s, r, -mu),
             DimensionlessSpectrum(1.0));
-    } else {
+    }
+    else
+    {
         // 일반적인 경우
         // T(A→B) = T(A→top) / T(B→top)
         return min(
@@ -489,7 +511,8 @@ inline DimensionlessSpectrum GetTransmittanceToSun(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> transmittance_texture,
     sampler s,
-    Length r, Number mu_s) {
+    Length r, Number mu_s)
+{
     // 수평선 각도 계산
     Number sin_theta_h = atmosphere.bottom_radius / r;
     Number cos_theta_h = -sqrt(max(1.0 - sin_theta_h * sin_theta_h, 0.0));
@@ -531,7 +554,8 @@ inline DimensionlessSpectrum GetTransmittanceToSun(
  *
  * @param nu cos(θ) = v · s (시선 방향과 태양 방향의 내적)
  */
-inline float RayleighPhaseFunction(Number nu) {
+inline float RayleighPhaseFunction(Number nu)
+{
     float k = 3.0 / (16.0 * PI);
     return k * (1.0 + nu * nu);
 }
@@ -550,7 +574,8 @@ inline float RayleighPhaseFunction(Number nu) {
  * @param g 비대칭 계수 (asymmetry parameter), [-1, 1]
  * @param nu cos(θ)
  */
-inline float MiePhaseFunction(Number g, Number nu) {
+inline float MiePhaseFunction(Number g, Number nu)
+{
     float k = 3.0 / (8.0 * PI) * (1.0 - g * g) / (2.0 + g * g);
     return k * (1.0 + nu * nu) / pow(1.0 + g * g - 2.0 * g * nu, 1.5);
 }
@@ -564,10 +589,14 @@ inline float MiePhaseFunction(Number g, Number nu) {
  */
 inline Length DistanceToNearestAtmosphereBoundary(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu, bool ray_r_mu_intersects_ground) {
-    if (ray_r_mu_intersects_ground) {
+    Length r, Number mu, bool ray_r_mu_intersects_ground)
+{
+    if (ray_r_mu_intersects_ground)
+    {
         return DistanceToBottomAtmosphereBoundary(atmosphere, r, mu);
-    } else {
+    }
+    else
+    {
         return DistanceToTopAtmosphereBoundary(atmosphere, r, mu);
     }
 }
@@ -596,7 +625,8 @@ inline void ComputeSingleScatteringIntegrand(
     sampler s,
     Length r, Number mu, Number mu_s, Number nu, Length d,
     bool ray_r_mu_intersects_ground,
-    thread DimensionlessSpectrum& rayleigh, thread DimensionlessSpectrum& mie) {
+    thread DimensionlessSpectrum& rayleigh, thread DimensionlessSpectrum& mie)
+{
 
     // 거리 d에서의 위치 계산
     Length r_d = ClampRadius(atmosphere, sqrt(d * d + 2.0 * r * mu * d + r * r));
@@ -637,7 +667,8 @@ inline void ComputeSingleScattering(
     sampler s,
     Length r, Number mu, Number mu_s, Number nu,
     bool ray_r_mu_intersects_ground,
-    thread IrradianceSpectrum& rayleigh, thread IrradianceSpectrum& mie) {
+    thread IrradianceSpectrum& rayleigh, thread IrradianceSpectrum& mie)
+{
 
     // 적분 구간 분할 (50개 샘플은 사전 계산용으로 적당)
     const int SAMPLE_COUNT = 50;
@@ -648,7 +679,8 @@ inline void ComputeSingleScattering(
     DimensionlessSpectrum mie_sum = DimensionlessSpectrum(0.0);
 
     // 사다리꼴 적분
-    for (int i = 0; i <= SAMPLE_COUNT; ++i) {
+    for (int i = 0; i <= SAMPLE_COUNT; ++i)
+    {
         Length d_i = Number(i) * dx;
         DimensionlessSpectrum rayleigh_i;
         DimensionlessSpectrum mie_i;
@@ -723,7 +755,8 @@ inline void ComputeSingleScattering(
 inline float4 GetScatteringTextureUvwzFromRMuMuSNu(
     constant AtmosphereParameters& atmosphere,
     Length r, Number mu, Number mu_s, Number nu,
-    bool ray_r_mu_intersects_ground) {
+    bool ray_r_mu_intersects_ground)
+{
 
     // === r 파라미터화 (w축) ===
     Length H = sqrt(atmosphere.top_radius * atmosphere.top_radius -
@@ -737,14 +770,17 @@ inline float4 GetScatteringTextureUvwzFromRMuMuSNu(
     Area discriminant = r_mu * r_mu - r * r + atmosphere.bottom_radius * atmosphere.bottom_radius;
     Number u_mu;
 
-    if (ray_r_mu_intersects_ground) {
+    if (ray_r_mu_intersects_ground)
+    {
         // 지표면과 교차: 텍스처 하위 절반 [0, 0.5) 사용
         Length d = -r_mu - SafeSqrt(discriminant);  // 지표면까지 거리
         Length d_min = r - atmosphere.bottom_radius;  // 최소 (수직 하강)
         Length d_max = rho;                           // 최대 (수평선 방향)
         u_mu = 0.5 - 0.5 * GetTextureCoordFromUnitRange(d_max == d_min ? 0.0 :
             (d - d_min) / (d_max - d_min), SCATTERING_TEXTURE_MU_SIZE / 2);
-    } else {
+    }
+    else
+    {
         // 하늘로 향함: 텍스처 상위 절반 [0.5, 1] 사용
         Length d = -r_mu + SafeSqrt(discriminant + H * H);  // 대기 상단까지 거리
         Length d_min = atmosphere.top_radius - r;            // 최소 (수직 상승)
@@ -786,7 +822,8 @@ inline float4 GetScatteringTextureUvwzFromRMuMuSNu(
 inline void GetRMuMuSNuFromScatteringTextureUvwz(
     constant AtmosphereParameters& atmosphere,
     float4 uvwz, thread Length& r, thread Number& mu, thread Number& mu_s,
-    thread Number& nu, thread bool& ray_r_mu_intersects_ground) {
+    thread Number& nu, thread bool& ray_r_mu_intersects_ground)
+{
 
     // r 복원
     Length H = sqrt(atmosphere.top_radius * atmosphere.top_radius -
@@ -795,7 +832,8 @@ inline void GetRMuMuSNuFromScatteringTextureUvwz(
     r = sqrt(rho * rho + atmosphere.bottom_radius * atmosphere.bottom_radius);
 
     // μ 복원 - 텍스처 절반 기준으로 분기
-    if (uvwz.z < 0.5) {
+    if (uvwz.z < 0.5)
+    {
         // 하위 절반: 지표면 교차
         Length d_min = r - atmosphere.bottom_radius;
         Length d_max = rho;
@@ -805,7 +843,9 @@ inline void GetRMuMuSNuFromScatteringTextureUvwz(
         mu = d == 0.0 ? Number(-1.0) :
             ClampCosine(-(rho * rho + d * d) / (2.0 * r * d));
         ray_r_mu_intersects_ground = true;
-    } else {
+    }
+    else
+    {
         // 상위 절반: 하늘
         Length d_min = atmosphere.top_radius - r;
         Length d_max = rho + H;
@@ -846,7 +886,8 @@ inline void GetRMuMuSNuFromScatteringTextureUvwz(
 inline void GetRMuMuSNuFromScatteringTextureFragCoord(
     constant AtmosphereParameters& atmosphere, float3 frag_coord,
     thread Length& r, thread Number& mu, thread Number& mu_s, thread Number& nu,
-    thread bool& ray_r_mu_intersects_ground) {
+    thread bool& ray_r_mu_intersects_ground)
+{
 
     const float4 SCATTERING_TEXTURE_SIZE = float4(
         SCATTERING_TEXTURE_NU_SIZE - 1,
@@ -880,7 +921,8 @@ inline void ComputeSingleScatteringTexture(
     texture2d<float> transmittance_texture,
     sampler s,
     float3 frag_coord,
-    thread IrradianceSpectrum& rayleigh, thread IrradianceSpectrum& mie) {
+    thread IrradianceSpectrum& rayleigh, thread IrradianceSpectrum& mie)
+{
 
     Length r;
     Number mu;
@@ -916,7 +958,8 @@ inline float3 GetScattering(
     texture3d<float> scattering_texture,
     sampler s,
     Length r, Number mu, Number mu_s, Number nu,
-    bool ray_r_mu_intersects_ground) {
+    bool ray_r_mu_intersects_ground)
+{
 
     // 파라미터 → 텍스처 좌표
     float4 uvwz = GetScatteringTextureUvwzFromRMuMuSNu(
@@ -968,7 +1011,8 @@ inline float3 GetScattering(
  */
 inline float2 GetIrradianceTextureUvFromRMuS(
     constant AtmosphereParameters& atmosphere,
-    Length r, Number mu_s) {
+    Length r, Number mu_s)
+{
     Number x_r = (r - atmosphere.bottom_radius) /
         (atmosphere.top_radius - atmosphere.bottom_radius);
     Number x_mu_s = mu_s * 0.5 + 0.5;  // [-1, 1] → [0, 1]
@@ -983,7 +1027,8 @@ inline float2 GetIrradianceTextureUvFromRMuS(
  */
 inline void GetRMuSFromIrradianceTextureUv(
     constant AtmosphereParameters& atmosphere,
-    float2 uv, thread Length& r, thread Number& mu_s) {
+    float2 uv, thread Length& r, thread Number& mu_s)
+{
     Number x_mu_s = GetUnitRangeFromTextureCoord(uv.x, IRRADIANCE_TEXTURE_WIDTH);
     Number x_r = GetUnitRangeFromTextureCoord(uv.y, IRRADIANCE_TEXTURE_HEIGHT);
     r = atmosphere.bottom_radius +
@@ -1010,7 +1055,8 @@ inline IrradianceSpectrum ComputeDirectIrradiance(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> transmittance_texture,
     sampler s,
-    Length r, Number mu_s) {
+    Length r, Number mu_s)
+{
 
     Number alpha_s = atmosphere.sun_angular_radius;
     // 태양 원반의 평균 코사인 계수 계산
@@ -1032,7 +1078,8 @@ inline IrradianceSpectrum ComputeDirectIrradianceTexture(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> transmittance_texture,
     sampler s,
-    float2 frag_coord) {
+    float2 frag_coord)
+{
 
     const float2 IRRADIANCE_TEXTURE_SIZE =
         float2(IRRADIANCE_TEXTURE_WIDTH, IRRADIANCE_TEXTURE_HEIGHT);
@@ -1053,7 +1100,8 @@ inline IrradianceSpectrum GetIrradiance(
     constant AtmosphereParameters& atmosphere,
     texture2d<float> irradiance_texture,
     sampler s,
-    Length r, Number mu_s) {
+    Length r, Number mu_s)
+{
     float2 uv = GetIrradianceTextureUvFromRMuS(atmosphere, r, mu_s);
     return IrradianceSpectrum(irradiance_texture.sample(s, uv).rgb);
 }
@@ -1087,8 +1135,10 @@ inline IrradianceSpectrum GetIrradiance(
  * 이 근사는 Mie 산란이 파장에 거의 독립적이라는 가정에 기반합니다.
  */
 inline float3 GetExtrapolatedSingleMieScattering(
-    constant AtmosphereParameters& atmosphere, float4 scattering) {
-    if (scattering.r <= 0.0) {
+    constant AtmosphereParameters& atmosphere, float4 scattering)
+{
+    if (scattering.r <= 0.0)
+    {
         return float3(0.0);
     }
     // combined.a / combined.r = Mie.r / (Rayleigh.r + multiple.r)
@@ -1123,7 +1173,8 @@ inline IrradianceSpectrum GetCombinedScattering(
     Length r, Number mu, Number mu_s, Number nu,
     bool ray_r_mu_intersects_ground,
     bool use_combined_textures,
-    thread IrradianceSpectrum& single_mie_scattering) {
+    thread IrradianceSpectrum& single_mie_scattering)
+{
 
     // 4선형 보간을 위한 텍스처 좌표 계산
     float4 uvwz = GetScatteringTextureUvwzFromRMuMuSNu(
@@ -1136,7 +1187,8 @@ inline IrradianceSpectrum GetCombinedScattering(
     float3 uvw1 = float3((tex_x + 1.0 + uvwz.y) / Number(SCATTERING_TEXTURE_NU_SIZE),
         uvwz.z, uvwz.w);
 
-    if (use_combined_textures) {
+    if (use_combined_textures)
+    {
         // Combined 모드: RGBA 텍스처에서 Mie 추출
         float4 combined_scattering =
             scattering_texture.sample(s, uvw0) * (1.0 - lerp) +
@@ -1144,7 +1196,9 @@ inline IrradianceSpectrum GetCombinedScattering(
         IrradianceSpectrum scattering = IrradianceSpectrum(combined_scattering.rgb);
         single_mie_scattering = GetExtrapolatedSingleMieScattering(atmosphere, combined_scattering);
         return scattering;
-    } else {
+    }
+    else
+    {
         // 분리 모드: 별도 텍스처에서 조회
         IrradianceSpectrum scattering = IrradianceSpectrum(
             scattering_texture.sample(s, uvw0).rgb * (1.0 - lerp) +
@@ -1168,7 +1222,8 @@ inline IrradianceSpectrum GetCombinedScattering(
  *
  * 투과율은 별도로 적용됩니다 (GetSkyRadiance에서).
  */
-inline RadianceSpectrum GetSolarRadiance(constant AtmosphereParameters& atmosphere) {
+inline RadianceSpectrum GetSolarRadiance(constant AtmosphereParameters& atmosphere)
+{
     return atmosphere.solar_irradiance /
         (PI * atmosphere.sun_angular_radius * atmosphere.sun_angular_radius);
 }
@@ -1206,7 +1261,8 @@ inline RadianceSpectrum GetSkyRadiance(
     Position camera, Direction view_ray, Length shadow_length,
     Direction sun_direction,
     bool use_combined_textures,
-    thread DimensionlessSpectrum& transmittance) {
+    thread DimensionlessSpectrum& transmittance)
+{
 
     // 카메라 위치에서 파라미터 계산
     Length r = length(camera);  // 지구 중심으로부터의 거리
@@ -1216,12 +1272,15 @@ inline RadianceSpectrum GetSkyRadiance(
     Length distance_to_top_atmosphere_boundary = -rmu -
         sqrt(rmu * rmu - r * r + atmosphere.top_radius * atmosphere.top_radius);
 
-    if (distance_to_top_atmosphere_boundary > 0.0) {
+    if (distance_to_top_atmosphere_boundary > 0.0)
+    {
         // 카메라를 대기 경계로 이동
         camera = camera + view_ray * distance_to_top_atmosphere_boundary;
         r = atmosphere.top_radius;
         rmu += distance_to_top_atmosphere_boundary;
-    } else if (r > atmosphere.top_radius) {
+    }
+    else if (r > atmosphere.top_radius)
+    {
         // 대기 밖에서 대기를 보지 않는 경우 → 검은색
         transmittance = DimensionlessSpectrum(1.0);
         return RadianceSpectrum(0.0);
@@ -1241,13 +1300,16 @@ inline RadianceSpectrum GetSkyRadiance(
     IrradianceSpectrum single_mie_scattering;
     IrradianceSpectrum scattering;
 
-    if (shadow_length == 0.0) {
+    if (shadow_length == 0.0)
+    {
         // 일반 하늘 렌더링
         scattering = GetCombinedScattering(
             atmosphere, scattering_texture, single_mie_scattering_texture, s,
             r, mu, mu_s, nu, ray_r_mu_intersects_ground,
             use_combined_textures, single_mie_scattering);
-    } else {
+    }
+    else
+    {
         // 광선 축 효과: 그림자 영역을 건너뛴 위치에서 산란 조회
         Length d = shadow_length;
         Length r_p = ClampRadius(atmosphere, sqrt(d * d + 2.0 * r * mu * d + r * r));
@@ -1308,7 +1370,8 @@ inline RadianceSpectrum GetSkyRadianceToPoint(
     Position camera, Position point, Length shadow_length,
     Direction sun_direction,
     bool use_combined_textures,
-    thread DimensionlessSpectrum& transmittance) {
+    thread DimensionlessSpectrum& transmittance)
+{
 
     // 시선 방향과 거리 계산
     Direction view_ray = normalize(point - camera);
@@ -1319,7 +1382,8 @@ inline RadianceSpectrum GetSkyRadianceToPoint(
     Length distance_to_top_atmosphere_boundary = -rmu -
         sqrt(rmu * rmu - r * r + atmosphere.top_radius * atmosphere.top_radius);
 
-    if (distance_to_top_atmosphere_boundary > 0.0) {
+    if (distance_to_top_atmosphere_boundary > 0.0)
+    {
         camera = camera + view_ray * distance_to_top_atmosphere_boundary;
         r = atmosphere.top_radius;
         rmu += distance_to_top_atmosphere_boundary;
@@ -1358,7 +1422,8 @@ inline RadianceSpectrum GetSkyRadianceToPoint(
 
     // 그림자 영역 투과율
     DimensionlessSpectrum shadow_transmittance = transmittance;
-    if (shadow_length > 0.0) {
+    if (shadow_length > 0.0)
+    {
         shadow_transmittance = GetTransmittance(atmosphere, transmittance_texture, s,
             r, mu, d, ray_r_mu_intersects_ground);
     }
@@ -1369,7 +1434,8 @@ inline RadianceSpectrum GetSkyRadianceToPoint(
 
     // Combined 텍스처 모드일 때, 뺄셈 후 Mie 산란 재추출
     // (뺄셈 후 scattering과 single_mie_scattering의 관계가 깨질 수 있으므로 재계산 필요)
-    if (use_combined_textures) {
+    if (use_combined_textures)
+    {
         single_mie_scattering = GetExtrapolatedSingleMieScattering(
             atmosphere, float4(scattering, single_mie_scattering.r));
     }
@@ -1422,7 +1488,8 @@ inline IrradianceSpectrum GetSunAndSkyIrradiance(
     texture2d<float> irradiance_texture,
     sampler s,
     Position point, Direction normal, Direction sun_direction,
-    thread IrradianceSpectrum& sky_irradiance) {
+    thread IrradianceSpectrum& sky_irradiance)
+{
 
     // 해당 위치의 고도와 태양 방향 코사인
     Length r = length(point);

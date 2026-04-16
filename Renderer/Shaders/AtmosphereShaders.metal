@@ -1,7 +1,5 @@
 /**
- * ============================================================================
- * 논문 기반 주석 (Paper-Based Comments)
- * ============================================================================
+ * ================= 논문 기반 주석 ================= 
  * 이 파일은 "Precomputed Atmospheric Scattering" 논문의 렌더링 단계를 구현합니다.
  * AtmosphereFunctions.metal에서 제공하는 산란/투과율 함수를 사용하여
  * 최종 화면에 표시될 색상을 계산합니다.
@@ -53,18 +51,21 @@ constant float3 kGroundAlbedo = float3(0.0, 0.0, 0.04);  // 지표면 반사율 
 // ============================================================================
 
 // 버텍스 입력 (사용하지 않음 - 풀스크린 쿼드는 vertexID로 생성)
-struct AtmosphereVertexIn {
+struct AtmosphereVertexIn 
+{
     float4 position [[attribute(0)]];
 };
 
 // 버텍스 출력 / 프래그먼트 입력
-struct AtmosphereVertexOut {
+struct AtmosphereVertexOut 
+{
     float4 position [[position]];  // 클립 공간 위치 (래스터라이저용)
     float3 view_ray;               // 월드 공간 시선 방향 (정규화되지 않음)
 };
 
 // 프래그먼트 출력
-struct AtmosphereFragmentOut {
+struct AtmosphereFragmentOut 
+{
     float4 color [[color(0)]];     // 최종 색상 (톤매핑/감마 보정 적용됨)
 };
 
@@ -82,7 +83,8 @@ vertex AtmosphereVertexOut atmosphereVertexShader(
 {
     // 풀스크린 쿼드 정점 (트라이앵글 스트립)
     // NDC 좌표계: (-1,-1) 좌하단, (1,1) 우상단
-    const float2 positions[4] = {
+    const float2 positions[4] = 
+    {
         float2(-1.0, -1.0),  // 좌하단
         float2( 1.0, -1.0),  // 우하단
         float2(-1.0,  1.0),  // 좌상단
@@ -137,16 +139,19 @@ vertex AtmosphereVertexOut atmosphereVertexShader(
  * 2. 레이-구체 교차 검사
  * 3. 교차 시, 각도 거리를 기준으로 소프트 섀도우 계산
  */
-float GetSunVisibility(float3 point, float3 sun_direction, float2 sun_size) {
+float GetSunVisibility(float3 point, float3 sun_direction, float2 sun_size) 
+{
     float3 p = point - kSphereCenter;
     float p_dot_v = dot(p, sun_direction);
     float p_dot_p = dot(p, p);
     float ray_sphere_center_squared_distance = p_dot_p - p_dot_v * p_dot_v;
     float discriminant = kSphereRadius * kSphereRadius - ray_sphere_center_squared_distance;
 
-    if (discriminant >= 0.0) {
+    if (discriminant >= 0.0) 
+    {
         float distance_to_intersection = -p_dot_v - sqrt(discriminant);
-        if (distance_to_intersection > 0.0) {
+        if (distance_to_intersection > 0.0) 
+        {
             float ray_sphere_distance = kSphereRadius - sqrt(ray_sphere_center_squared_distance);
             float ray_sphere_angular_distance = -ray_sphere_distance / p_dot_v;
             return smoothstep(1.0, 0.0, ray_sphere_angular_distance / sun_size.x);
@@ -166,7 +171,8 @@ float GetSunVisibility(float3 point, float3 sun_direction, float2 sun_size) {
  * - 간단한 근사식으로 구체 가림 비율을 계산합니다.
  * - 정확한 구적분 대신 빠른 근사치를 사용합니다.
  */
-float GetSkyVisibility(float3 point) {
+float GetSkyVisibility(float3 point) 
+{
     float3 p = point - kSphereCenter;
     float p_dot_p = dot(p, p);
     return 1.0 + p.z / sqrt(p_dot_p) * kSphereRadius * kSphereRadius / p_dot_p;
@@ -198,7 +204,8 @@ float GetSkyVisibility(float3 point) {
  * - 이 길이만큼 그림자 영역을 통과하므로 산란 계산에서 제외
  */
 void GetSphereShadowInOut(float3 camera, float3 view_direction, float3 sun_direction,
-                          float2 sun_size, thread float &d_in, thread float &d_out) {
+                          float2 sun_size, thread float &d_in, thread float &d_out)
+{
     float3 pos = camera - kSphereCenter;
     float pos_dot_sun = dot(pos, sun_direction);
     float view_dot_sun = dot(view_direction, sun_direction);
@@ -211,21 +218,27 @@ void GetSphereShadowInOut(float3 camera, float3 view_direction, float3 sun_direc
               2.0 * k * kSphereRadius * pos_dot_sun - kSphereRadius * kSphereRadius;
     float discriminant = b * b - a * c;
 
-    if (discriminant > 0.0) {
+    if (discriminant > 0.0)
+    {
         d_in = max(0.0, (-b - sqrt(discriminant)) / a);
         d_out = (-b + sqrt(discriminant)) / a;
 
         float d_base = -pos_dot_sun / view_dot_sun;
         float d_apex = -(pos_dot_sun + kSphereRadius / k) / view_dot_sun;
 
-        if (view_dot_sun > 0.0) {
+        if (view_dot_sun > 0.0)
+        {
             d_in = max(d_in, d_apex);
             d_out = a > 0.0 ? min(d_out, d_base) : d_base;
-        } else {
+        }
+        else
+        {
             d_in = a > 0.0 ? max(d_in, d_base) : d_base;
             d_out = min(d_out, d_apex);
         }
-    } else {
+    }
+    else
+    {
         d_in = 0.0;
         d_out = 0.0;
     }
@@ -321,11 +334,13 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
     float sphere_alpha = 0.0;           // 구체 가시성 (0=투명, 1=불투명)
     float3 sphere_radiance = float3(0.0);  // 구체에서 오는 복사휘도
 
-    if (discriminant >= 0.0) {  // 레이가 구체와 교차함
+    if (discriminant >= 0.0)  // 레이가 구체와 교차함
+    {
         // 교차점까지의 거리 (가까운 쪽)
         float distance_to_intersection = -p_dot_v - sqrt(discriminant);
 
-        if (distance_to_intersection > 0.0) {  // 카메라 앞에 있음
+        if (distance_to_intersection > 0.0)  // 카메라 앞에 있음
+        {
             // 안티앨리어싱 알파 계산
             // 구체 경계에서 부드러운 블렌딩을 위해 각도 거리 사용
             float ray_sphere_distance = kSphereRadius - sqrt(ray_sphere_center_squared_distance);
@@ -407,10 +422,12 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
     float ground_alpha = 0.0;               // 지표면 가시성
     float3 ground_radiance = float3(0.0);   // 지표면에서 오는 복사휘도
 
-    if (discriminant >= 0.0) {  // 레이가 지표면과 교차함
+    if (discriminant >= 0.0)  // 레이가 지표면과 교차함
+    {
         float distance_to_intersection = -p_dot_v - sqrt(discriminant);
 
-        if (distance_to_intersection > 0.0) {  // 카메라 앞에 있음 (아래를 보는 경우)
+        if (distance_to_intersection > 0.0)  // 카메라 앞에 있음 (아래를 보는 경우)
+        {
             float3 point = uniforms.camera + view_direction * distance_to_intersection;
             float3 normal = normalize(point - uniforms.earth_center);  // 지표면 법선 = 상향 벡터
 
@@ -504,7 +521,8 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
     //   L_sun = E_sun / (π × θ_sun²)   (논문 참고)
     //
     // 대기 투과율을 곱해 감쇠된 태양빛 표현 (일출/일몰 시 붉은 태양)
-    if (dot(view_direction, uniforms.sun_direction) > uniforms.sun_size.y) {
+    if (dot(view_direction, uniforms.sun_direction) > uniforms.sun_size.y)
+    {
         radiance = radiance + transmittance * GetSolarRadiance(atmosphere);
     }
 
@@ -587,7 +605,8 @@ fragment AtmosphereFragmentOut atmosphereFragmentShader(
 // - Metal: 화면 좌상단이 원점, Y축 아래로
 // 따라서 Y를 뒤집어 OpenGL 스타일 셰이더 로직과 호환
 
-struct SimpleVertexIn {
+struct SimpleVertexIn
+{
     float4 position [[attribute(0)]];  // 버텍스 버퍼에서 읽은 클립 공간 위치
 };
 
